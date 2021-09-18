@@ -13,7 +13,7 @@ namespace DeferredTask.Services
 
 		Task Start();
 
-		void Stop();
+		Task Stop();
 	}
 	
 	public class DeferredTaskService : IDeferredTaskService
@@ -37,9 +37,9 @@ namespace DeferredTask.Services
 			Console.WriteLine("DeferredTaskService Stopped");
 		}
 
-		public void Stop()
+		public Task Stop()
 		{
-			Task.Run(() => _cancellationToken.Cancel());
+			return Task.Run(() => _cancellationToken.Cancel());
 		}
 
 		private void Process()
