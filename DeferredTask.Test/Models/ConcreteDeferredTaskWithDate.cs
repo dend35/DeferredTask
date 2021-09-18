@@ -1,6 +1,7 @@
 ﻿using System;
+using DeferredTask.Models;
 
-namespace TaskQuery.Models
+namespace DeferredTask.Test.Models
 {
 	public class ConcreteDeferredTaskWithDate : AbstractDeferredTask
 	{

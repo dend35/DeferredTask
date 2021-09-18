@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TaskQuery\TaskQuery.csproj" />
+      <ProjectReference Include="..\DeferredTask\DeferredTask.csproj" />
     </ItemGroup>
 
 </Project>

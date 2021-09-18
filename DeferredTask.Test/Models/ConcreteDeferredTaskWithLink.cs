@@ -1,4 +1,6 @@
-﻿namespace TaskQuery.Models
+﻿using DeferredTask.Models;
+
+namespace DeferredTask.Test.Models
 {
 	public class ConcreteDeferredTaskWithLink : AbstractDeferredTask
 	{

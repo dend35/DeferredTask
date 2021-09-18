@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TaskQuery.Models;
-using TaskQuery.Services;
+using DeferredTask.Models;
+using DeferredTask.Services;
+using DeferredTask.Test.Models;
 using Xunit;
 
-namespace TaskQuery.Test
+namespace DeferredTask.Test
 {
 	public class Test
 	{

@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskQuery", "TaskQuery\TaskQuery.csproj", "{84D82A5B-E83B-4369-80E5-8125BC1C5176}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeferredTask", "DeferredTask\DeferredTask.csproj", "{84D82A5B-E83B-4369-80E5-8125BC1C5176}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskQuery.Test", "TaskQuery.Test\TaskQuery.Test.csproj", "{5F5EFBBF-0172-4127-B593-609132A9C211}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeferredTask.Test", "DeferredTask.Test\DeferredTask.Test.csproj", "{5F5EFBBF-0172-4127-B593-609132A9C211}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

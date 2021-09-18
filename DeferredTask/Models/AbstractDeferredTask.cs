@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TaskQuery.Models
+namespace DeferredTask.Models
 {
 	public abstract class AbstractDeferredTask
 	{

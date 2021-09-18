@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TaskQuery.Models;
+using DeferredTask.Models;
 
-namespace TaskQuery.Services
+namespace DeferredTask.Services
 {
 	public interface IDeferredTaskService
 	{
