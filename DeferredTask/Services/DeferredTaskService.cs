@@ -19,9 +19,9 @@ namespace DeferredTask.Services
 	public class DeferredTaskService : IDeferredTaskService
 	{
 		private CancellationTokenSource _cancellationToken;
-		private List<(Type type, Action<AbstractDeferredTask> action)> _config;
+		private List<(Type type, Action<IAbstractDeferredTask> action)> _config;
 
-		public DeferredTaskService(List<(Type type, Action<AbstractDeferredTask> action)> config)
+		public DeferredTaskService(List<(Type type, Action<IAbstractDeferredTask> action)> config)
 		{
 			_config = config;
 		}
@@ -66,10 +66,10 @@ namespace DeferredTask.Services
 	
 	public class DeferredTaskBuilder
 	{
-		private List<(Type type, Action<AbstractDeferredTask> action)> Config { get; } = new();
+		private List<(Type type, Action<IAbstractDeferredTask> action)> Config { get; } = new();
 		private IDeferredTaskService _deferredTaskService;
 			
-		public DeferredTaskBuilder Add<T>(Action<T> action) where T : AbstractDeferredTask
+		public DeferredTaskBuilder Add<T>(Action<T> action) where T : IAbstractDeferredTask
 		{
 			Config.Add((typeof(T), i => action((T)i)));
 			return this;

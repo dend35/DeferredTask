@@ -2,7 +2,17 @@
 
 namespace DeferredTask.Models
 {
-	public abstract class AbstractDeferredTask
+	public interface IAbstractDeferredTask
+	{
+		DateTime Created { get; set; }
+		DateTime Start { get; set; }
+		DateTime? End { get; set; }
+		bool IsCompleted { get; set; }
+		bool IsSuccess { get; set; }
+		bool InProgress { get; set; }
+	}
+
+	public abstract class AbstractDeferredTask : IAbstractDeferredTask
 	{
 		public DateTime Created { get; set; }
 
