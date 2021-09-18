@@ -14,11 +14,19 @@ namespace TaskQuery.Services
 		Task Start();
 
 		Task Stop();
+
+		void Process();
 	}
 	
 	public class DeferredTaskService : IDeferredTaskService
 	{
 		private CancellationTokenSource _cancellationToken;
+		private List<(Type type, Action<AbstractDeferredTask> action)> _config;
+
+		public DeferredTaskService(List<(Type type, Action<AbstractDeferredTask> action)> config)
+		{
+			_config = config;
+		}
 
 		public async Task Start()
 		{
@@ -36,28 +44,14 @@ namespace TaskQuery.Services
 			return Task.Run(() => _cancellationToken.Cancel());
 		}
 
-		private static void Process()
+		public void Process()
 		{
 			foreach (var deferredTask in IDeferredTaskService.DeferredTasks.Where(i=> !i.InProgress && !i.IsCompleted))
 			{
 				try
 				{
 					deferredTask.StartTask();
-					switch (deferredTask)
-					{
-						case ConcreteDeferredTaskWithLink task:
-						{
-							Console.WriteLine(task.Link);
-							deferredTask.IsSuccess = true;
-							break;
-						}
-						case ConcreteDeferredTaskWithDate task:
-						{
-							Console.WriteLine(task.Date);
-							deferredTask.IsSuccess = true;
-							break;
-						}
-					}
+					_config.FirstOrDefault(i => i.type == deferredTask.GetType()).action(deferredTask);
 				}
 				catch
 				{

@@ -11,23 +11,13 @@ namespace TaskQuery
 	{
 		private static async Task Main(string[] args)
 		{
-			IDeferredTaskService.DeferredTasks.AddRange(new List<AbstractDeferredTask>()
-			{
-				new ConcreteDeferredTaskWithDate()
-				{
-					Date = new DateTime(2010, 10, 10)
-				},
-				new ConcreteDeferredTaskWithLink()
-				{
-					Link = "Link - 123 321 123 321"
-				}
-			});
+			
 			
 			
 			Console.WriteLine("Before");
 			var myThread = new Thread(() =>
 			{
-				IDeferredTaskService deferredTaskService = new DeferredTaskService();
+				IDeferredTaskService deferredTaskService = new DeferredTaskService(null);
 				deferredTaskService.Start();
 			});
 			myThread.Start();
