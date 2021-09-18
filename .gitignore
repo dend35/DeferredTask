@@ -1,3 +1,5 @@
 /TaskQuery/bin
 /TaskQuery/obj
+/TaskQuery.Test/bin
+/TaskQuery.Test/obj
 /.*
