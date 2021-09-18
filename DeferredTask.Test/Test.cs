@@ -11,9 +11,15 @@ namespace DeferredTask.Test
 {
 	public class Test
 	{
+		private readonly IDeferredTaskService _deferredTaskService;
 		public Test()
 		{
-			IDeferredTaskService.DeferredTasks.AddRange(new List<AbstractDeferredTask>()
+			_deferredTaskService = new DeferredTaskBuilder()
+				.Add<ConcreteDeferredTaskWithDate>(i => Console.WriteLine(i.Date))
+				.Add<ConcreteDeferredTaskWithLink>(i => Console.WriteLine(i.Link))
+				.Build();
+			
+			_deferredTaskService.AddTask(new List<AbstractDeferredTask>()
 			{
 				new ConcreteDeferredTaskWithDate()
 				{
@@ -29,20 +35,16 @@ namespace DeferredTask.Test
 		[Fact]
 		public async Task Test1()
 		{
-			var thread = new DeferredTaskBuilder()
-				.Add<ConcreteDeferredTaskWithDate>(i => Console.WriteLine(i.Date))
-				.Add<ConcreteDeferredTaskWithLink>(i => Console.WriteLine(i.Link))
-				.Build();
-			Assert.NotNull(thread);
 			
+			Assert.NotNull(_deferredTaskService);
 			await Task.Delay(TimeSpan.FromSeconds(1));
-			IDeferredTaskService.DeferredTasks.Add(new ConcreteDeferredTaskWithLink
+			_deferredTaskService.AddTask(new ConcreteDeferredTaskWithLink
 			{
 				Link = "New Link"
 			});
 
 			await Task.Delay(TimeSpan.FromSeconds(10));
-			Assert.True(IDeferredTaskService.DeferredTasks.First(i => i is ConcreteDeferredTaskWithLink { Link: "New Link" }).IsCompleted);
+			Assert.True(((DeferredTaskService)_deferredTaskService).DeferredTasks.First(i => i is ConcreteDeferredTaskWithLink { Link: "New Link" }).IsCompleted);
 		}
 	}
 }

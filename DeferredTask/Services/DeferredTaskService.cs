@@ -9,8 +9,13 @@ namespace DeferredTask.Services
 {
 	public interface IDeferredTaskService
 	{
-		public static readonly List<AbstractDeferredTask> DeferredTasks = new();
+		void AddTask(params AbstractDeferredTask[] tasks);
+		void AddTask(IEnumerable<AbstractDeferredTask> tasks);
 
+		IEnumerable<AbstractDeferredTask> GetCompletedTasks();
+		
+		IEnumerable<AbstractDeferredTask> GetUncompletedTasks();
+		
 		Task Start();
 
 		Task Stop();
@@ -20,10 +25,31 @@ namespace DeferredTask.Services
 	{
 		private CancellationTokenSource _cancellationToken;
 		private List<(Type type, Action<IAbstractDeferredTask> action)> _config;
-
+		public readonly List<AbstractDeferredTask> DeferredTasks = new();
+		
 		public DeferredTaskService(List<(Type type, Action<IAbstractDeferredTask> action)> config)
 		{
 			_config = config;
+		}
+
+		public void AddTask(params AbstractDeferredTask[] tasks)
+		{
+			DeferredTasks.AddRange(tasks.ToList());
+		}
+		
+		public void AddTask(IEnumerable<AbstractDeferredTask> tasks)
+		{
+			DeferredTasks.AddRange(tasks);
+		}
+		
+		public IEnumerable<AbstractDeferredTask> GetCompletedTasks()
+		{
+			return DeferredTasks.Where(i => i.IsCompleted);
+		}
+		
+		public IEnumerable<AbstractDeferredTask> GetUncompletedTasks()
+		{
+			return DeferredTasks.Where(i => !i.IsCompleted);
 		}
 
 		public async Task Start()
@@ -44,7 +70,7 @@ namespace DeferredTask.Services
 
 		private void Process()
 		{
-			foreach (var deferredTask in IDeferredTaskService.DeferredTasks.Where(i=> !i.InProgress && !i.IsCompleted))
+			foreach (var deferredTask in DeferredTasks.Where(i=> !i.InProgress && !i.IsCompleted))
 			{
 				try
 				{
@@ -75,7 +101,7 @@ namespace DeferredTask.Services
 			return this;
 		}
 
-		public Thread Build()
+		public IDeferredTaskService Build()
 		{
 			_deferredTaskService = new DeferredTaskService(Config);
 			var thread = new Thread(() =>
@@ -86,7 +112,7 @@ namespace DeferredTask.Services
 				Name = "DeferredTaskService"
 			};
 			thread.Start();
-			return thread;
+			return _deferredTaskService;
 		}
 
 	}
