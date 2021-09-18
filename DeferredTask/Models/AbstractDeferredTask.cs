@@ -18,13 +18,13 @@ namespace DeferredTask.Models
 
 		public void StartTask()
 		{
-			Start = DateTime.Now;
+			Start = DateTime.UtcNow;
 			InProgress = true;
 		}
 		
 		public void EndTask()
 		{
-			End = DateTime.Now;
+			End = DateTime.UtcNow;
 			InProgress = false;
 			IsCompleted = true;
 		}
