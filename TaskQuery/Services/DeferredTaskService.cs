@@ -13,9 +13,7 @@ namespace TaskQuery.Services
 
 		Task Start();
 
-		Task Stop();
-
-		void Process();
+		void Stop();
 	}
 	
 	public class DeferredTaskService : IDeferredTaskService
@@ -39,12 +37,12 @@ namespace TaskQuery.Services
 			Console.WriteLine("DeferredTaskService Stopped");
 		}
 
-		public Task Stop()
+		public void Stop()
 		{
-			return Task.Run(() => _cancellationToken.Cancel());
+			Task.Run(() => _cancellationToken.Cancel());
 		}
 
-		public void Process()
+		private void Process()
 		{
 			foreach (var deferredTask in IDeferredTaskService.DeferredTasks.Where(i=> !i.InProgress && !i.IsCompleted))
 			{
@@ -63,5 +61,33 @@ namespace TaskQuery.Services
 				}
 			}
 		}
+	}
+	
+	
+	public class DeferredTaskBuilder
+	{
+		private List<(Type type, Action<AbstractDeferredTask> action)> Config { get; } = new();
+		private IDeferredTaskService _deferredTaskService;
+			
+		public DeferredTaskBuilder Add<T>(Action<T> action) where T : AbstractDeferredTask
+		{
+			Config.Add((typeof(T), i => action((T)i)));
+			return this;
+		}
+
+		public Thread Build()
+		{
+			_deferredTaskService = new DeferredTaskService(Config);
+			var thread = new Thread(() =>
+			{
+				_deferredTaskService.Start();
+			})
+			{
+				Name = "DeferredTaskService"
+			};
+			thread.Start();
+			return thread;
+		}
+
 	}
 }
