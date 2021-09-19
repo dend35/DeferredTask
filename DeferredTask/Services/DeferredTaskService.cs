@@ -24,10 +24,10 @@ namespace DeferredTask.Services
 	public class DeferredTaskService : IDeferredTaskService
 	{
 		private CancellationTokenSource _cancellationToken;
-		private List<(Type type, Action<IAbstractDeferredTask> action)> _config;
+		private List<(Type type, Action<IAbstractDeferredTask> action, bool autoStart)> _config;
 		public readonly List<AbstractDeferredTask> DeferredTasks = new();
 		
-		public DeferredTaskService(List<(Type type, Action<IAbstractDeferredTask> action)> config)
+		public DeferredTaskService(List<(Type type, Action<IAbstractDeferredTask> action, bool autoStart)> config)
 		{
 			_config = config;
 		}
@@ -58,7 +58,7 @@ namespace DeferredTask.Services
 			while(!_cancellationToken.IsCancellationRequested)
 			{
 				Process();
-				await Task.Delay(TimeSpan.FromSeconds(5), _cancellationToken.Token);
+				await Task.Delay(TimeSpan.FromSeconds(1), _cancellationToken.Token);
 			}
 			Console.WriteLine("DeferredTaskService Stopped");
 		}
@@ -70,12 +70,21 @@ namespace DeferredTask.Services
 
 		private void Process()
 		{
-			foreach (var deferredTask in DeferredTasks.Where(i=> !i.InProgress && !i.IsCompleted))
+			var tasks = DeferredTasks.Where(i => !i.InProgress && !i.IsCompleted);
+			foreach (var deferredTask in tasks)
 			{
+				var (type, action, autoStart) = _config.FirstOrDefault(i => i.type == deferredTask.GetType());
+				if(action == null || type == null)
+				{
+					continue;
+				}
 				try
 				{
-					deferredTask.StartTask();
-					_config.FirstOrDefault(i => i.type == deferredTask.GetType()).action(deferredTask);
+					if(autoStart)
+					{
+						deferredTask.StartTask();
+					}
+					action(deferredTask);
 				}
 				catch
 				{
@@ -83,7 +92,10 @@ namespace DeferredTask.Services
 				}
 				finally
 				{
-					deferredTask.EndTask();
+					if(autoStart)
+					{
+						deferredTask.EndTask();
+					}
 				}
 			}
 		}
@@ -92,12 +104,12 @@ namespace DeferredTask.Services
 	
 	public class DeferredTaskBuilder
 	{
-		private List<(Type type, Action<IAbstractDeferredTask> action)> Config { get; } = new();
+		private List<(Type type, Action<IAbstractDeferredTask> action, bool autoStart)> Config { get; } = new();
 		private IDeferredTaskService _deferredTaskService;
 			
-		public DeferredTaskBuilder Add<T>(Action<T> action) where T : IAbstractDeferredTask
+		public DeferredTaskBuilder Add<T>(Action<T> action, bool autoStart = true) where T : IAbstractDeferredTask
 		{
-			Config.Add((typeof(T), i => action((T)i)));
+			Config.Add((typeof(T), i => action((T)i), autoStart));
 			return this;
 		}
 
